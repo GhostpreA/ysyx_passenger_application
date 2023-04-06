@@ -1,18 +1,76 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div style="margin-top: 30px">
+
+            <van-image
+                width="100%"
+                height="360px"
+                :src="require('../img/ditu.png')"
+            />
+<!--      <div id="container" style="position: relative; width: 100%; height: 800px"></div>-->
+    </div>
+
+    <div class="centre" >
+
+    </div>
+
+    <div class="logo">
+      <van-image
+          :src="require('../img/logo.png')"
+      />
+    </div>
+
+    <van-tabbar v-model="active">
+      <van-tabbar-item icon="home-o" >首页</van-tabbar-item>
+      <van-tabbar-item icon="chat-o" >聊天</van-tabbar-item>
+      <van-tabbar-item icon="user-o" :to="{name:'personal'}">个人</van-tabbar-item>
+
+    </van-tabbar>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+
+
+
 
 export default {
   name: 'HomeView',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      active: '',
+    }
+  },
+  methods: {
+
+  },
+  mounted() {
+
   }
-}
+};
+
 </script>
+
+<style scoped>
+
+.van-tabbar-item--active { /*//底部导航栏，功能点击变色*/
+  color: #d81e06;
+}
+
+.centre{
+  width: 360px;
+  height: 260px;
+  border-radius: 15px;/*边框弧度*/
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.63);
+  margin: auto;
+  margin-top: 15px;
+  background-color: rgba(253, 253, 253, 0.6);
+}
+
+.logo{
+  width:160px;
+  height:120px;
+  margin:auto;
+}
+
+</style>

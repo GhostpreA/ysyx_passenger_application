@@ -4,12 +4,20 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+
+  //公共state对象，存储所有组件的状态
   state: {
   },
+
+  //唯一取值的方法，计算属性
   getters: {
   },
+
+  //唯一可以修改state值的方法，同步阻塞
   mutations: {
   },
+
+  //异步调用mutations方法
   actions: {
   },
   modules: {
