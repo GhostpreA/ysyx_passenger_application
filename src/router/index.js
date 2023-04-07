@@ -8,12 +8,22 @@ import HomeView from "@/views/HomeView";
 import personalView from "@/views/PersonalView";
 import settingView from "@/views/SettingView";
 import BindingPhoneView from "@/views/BindingPhoneView";
+import AmendPwd from "@/views/AmendPwdView";
+import AmendPwdView from "@/views/AmendPwdView";
+import PosterView from "@/views/PosterView";
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
 Vue.use(VueRouter)
 
 const routes = [
+    //
+    // {
+    //     path: '/',
+    //     name: 'posterView',
+    //     component: PosterView
+    // },
+
     {
         path: '/login',
         name: 'login',
@@ -52,7 +62,13 @@ const routes = [
         path: '/bindingPhone',
         name: 'bindingPhone',
         component: BindingPhoneView
-    }
+    },
+    {//修改密码页面
+        path: '/amendPwd',
+        name: 'amendPwd',
+        component: AmendPwdView
+    },
+
 
 ]
 

@@ -1,14 +1,10 @@
 <template>
   <div class="home">
-    <div style="margin-top: 30px">
-
-            <van-image
-                width="100%"
-                height="360px"
-                :src="require('../img/ditu.png')"
-            />
-<!--      <div id="container" style="position: relative; width: 100%; height: 800px"></div>-->
+    <div style="margin-top: 30px;">
+      <HelloWorld msg="Welcome to Your Vue.js App"/>
     </div>
+
+
 
     <div class="centre" >
 
@@ -30,12 +26,14 @@
 </template>
 
 <script>
-
-
-
+import HelloWorld from "@/components/HelloWorld";
 
 export default {
   name: 'HomeView',
+  components:{
+    HelloWorld,
+
+  },
   data() {
     return {
       active: '',
@@ -46,7 +44,7 @@ export default {
   },
   mounted() {
 
-  }
+  },
 };
 
 </script>

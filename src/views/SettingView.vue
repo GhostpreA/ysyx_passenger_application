@@ -11,7 +11,7 @@
     <div style="width: 100%;height: 70px; background-color: #acbbbb"/>
 
     <br>
-    <van-cell title="修改密码" icon="shield-o" is-link style="font-size: 25px"></van-cell>
+    <van-cell title="修改密码" icon="shield-o" is-link to="amendPwd" style="font-size: 25px"></van-cell>
     <van-divider :style="{ color: '#cccece', borderColor: '#cccece', padding: '0 0px' }">
     </van-divider>
     <van-cell title="换绑手机号" icon="phone-circle-o" is-link to="bindingPhone" style="font-size: 25px"></van-cell>
@@ -21,7 +21,8 @@
     <van-divider :style="{ color: '#cccece', borderColor: '#cccece', padding: '0 0px' }">
     </van-divider>
     <van-cell-group>
-      <van-cell title="版本介绍" icon="back-top" is-link to="setting" style="font-size: 25px" value="v1.1.0" @click="toakt"></van-cell>
+      <van-cell title="版本介绍" icon="back-top" is-link to="setting" style="font-size: 25px" value="v1.1.0"
+                @click="toakt"></van-cell>
     </van-cell-group>
 
 
@@ -49,7 +50,7 @@ export default {
       router.push({path: "personal"})
     },
 
-    toakt:function () {
+    toakt: function () {
       Toast({
         message: '已是最新版本',
 
