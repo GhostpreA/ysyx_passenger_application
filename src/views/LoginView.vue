@@ -12,9 +12,7 @@
 
 
     <div class="userForm">
-      <div style="width: 240px; height: 250px; margin: 25px 26px;" >
-
-        <van-form @submit="onSubmit">
+      <div style="width: 240px; height: 250px; margin: 25px auto;" >
           <van-field
               v-model="username"
               name="用户名"
@@ -33,14 +31,16 @@
           <div style="margin: 16px;">
             <van-button round block type="info" native-type="submit">登入</van-button>
           </div>
-        </van-form>
         <div style="margin: 16px;">
           <van-button round block type="info" @click="register">注册</van-button>
         </div>
       </div>
     </div>
-    <div class="tableTitle"><span class="midText">其他登入方式</span></div>
-
+    <van-divider
+        :style="{ color: '#18191a', borderColor: '#191a1c', padding: '0 16px' }"
+    >
+      其他登入方式
+    </van-divider>
     <van-icon name="wechat" color="#60A103FF" size="50px" style="margin-left: 110px"/>
     <van-icon name="graphic" color="#8C9EFFF0" size="50px" style="margin-left: 60px"/>
     <br>
@@ -106,24 +106,6 @@ export default {
   overflow: hidden;
 }
 
-.tableTitle {
-  position: relative;
-  margin: 30px auto;
-  width: 300px;
-  height: 1px;
-  background-color: #d4d4d4;
-  text-align: center;
-  font-size: 16px;
-  color: rgba(101, 101, 101, 1);
-}
 
-.midText {
-  position: absolute;
-  left: 50%;
-  background-color: #ffffff;
-  padding: 0 15px;
-  transform: translatex(-50%) translateY(-50%);
-
-}
 
 </style>

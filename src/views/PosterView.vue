@@ -3,7 +3,7 @@
     <van-image
         width="100%"
         height="100%"
-        :src="require('../img/Poster2.png')"
+        :src="require('../img/Poster.png')"
     />
   </div>
 </template>

@@ -11,30 +11,27 @@
     <div class="userForm">
       <div style="width: 90%; height: 250px; margin: 80px 30px;">
 
-        <van-form @submit="onSubmit">
-
-          <van-field
-              v-model="cellphone"
-              name="手机号"
-              label="手机号"
-              placeholder="手机号"
-              :rules="[{ required: true, message: '请填写手机号' }]"
-          />
-          <van-field
-              v-model="sms"
-              center
-              clearable
-              label="短信验证码"
-              placeholder="请输入短信验证码"
-          >
-            <template #button>
-              <van-button size="small" type="primary">发送验证码</van-button>
-            </template>
-          </van-field>
-          <div style="margin: 16px;">
-            <van-button round block type="info" native-type="submit">登入</van-button>
-          </div>
-        </van-form>
+        <van-field
+            v-model="cellphone"
+            name="手机号"
+            label="手机号"
+            placeholder="手机号"
+            :rules="[{ required: true, message: '请填写手机号' }]"
+        />
+        <van-field
+            v-model="sms"
+            center
+            clearable
+            label="短信验证码"
+            placeholder="请输入短信验证码"
+        >
+          <template #button>
+            <van-button size="small" type="primary">发送验证码</van-button>
+          </template>
+        </van-field>
+        <div style="margin: 16px;">
+          <van-button round block type="info" native-type="submit">登入</van-button>
+        </div>
       </div>
     </div>
   </div>
@@ -45,6 +42,12 @@ import router from "@/router";
 
 export default {
   name: "Verification",
+  data() {
+    return {
+      cellphone: '',
+      sms: '',
+    }
+  },
 
   methods: {
     onSubmit(values) {//登入提交表单中内容 Object类型

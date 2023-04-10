@@ -2,7 +2,6 @@
   <div>
     <div class="top">
       <van-icon name="arrow-left" size="40px" @click="back"/>
-
       <div>
         <van-icon name="user-circle-o" size="60px" style="margin-top: 50px; margin-left: 43%;"/>
       </div>
@@ -12,7 +11,6 @@
 
     <div class="userForm">
       <div style="width: 70%; height: 280px; margin: 60px 50px;">
-        <van-form @submit="onSubmit">
           <van-field
               v-model="username"
               name="昵称"
@@ -67,7 +65,6 @@
           <div style="margin: 16px;">
             <van-button round block type="info" native-type="submit">注册</van-button>
           </div>
-        </van-form>
       </div>
     </div>
 
