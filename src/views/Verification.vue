@@ -11,7 +11,7 @@
     <div class="userForm">
       <div style="width: 90%; height: 250px; margin: 80px 30px;">
 
-        <van-form @submit="onSubmit">
+        <van-form>
 
           <van-field
               v-model="cellphone"
@@ -28,7 +28,7 @@
               placeholder="请输入短信验证码"
           >
             <template #button>
-              <van-button size="small" type="primary">发送验证码</van-button>
+              <van-button size="small" type="primary" @click="getCode">发送验证码</van-button>
             </template>
           </van-field>
           <div style="margin: 16px;">
@@ -45,6 +45,13 @@ import router from "@/router";
 
 export default {
   name: "Verification",
+  data(){
+    return{
+      cellphone:""
+    }
+
+  }
+  ,
 
   methods: {
     onSubmit(values) {//登入提交表单中内容 Object类型
@@ -52,6 +59,23 @@ export default {
     },
     back: function () {//返回登入主页面
       router.push({path: "login"})
+    },
+    getCode:function () {
+
+      console.log(this.cellphone)
+      const that = this
+      this.$axios({
+        method:"get",
+        baseURL:"http://localhost:8081",
+        url:`/api/passenger/login/getCode/${this.cellphone}`,
+      }).then(res=>{
+        console.log(res.status)
+
+
+      }).catch(err=>{
+        console.log(err)
+      })
+
     }
   },
 }
