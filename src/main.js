@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import Vant, {Field, Form} from 'vant';
 import 'vant/lib/index.css';
+import './myaxios.js'
 
 Vue.use(Form);
 Vue.use(Field);

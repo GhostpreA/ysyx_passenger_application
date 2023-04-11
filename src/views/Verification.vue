@@ -55,6 +55,23 @@ export default {
     },
     back: function () {//返回登入主页面
       router.push({path: "login"})
+    },
+    getCode:function () {
+
+      console.log(this.cellphone)
+      const that = this
+      this.$axios({
+        method:"get",
+        baseURL:"http://localhost:8081",
+        url:`/api/passenger/login/getCode/${this.cellphone}`,
+      }).then(res=>{
+        console.log(res.status)
+
+
+      }).catch(err=>{
+        console.log(err)
+      })
+
     }
   },
 }
