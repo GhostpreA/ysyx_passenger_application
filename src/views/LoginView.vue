@@ -71,27 +71,27 @@ export default {
 
     ...mapActions(["savePassengerInfoAction"]),
     clickLogin: function () {
-      router.push({path: "home"})
+      // router.push({path: "home"})
       const that = this
 
       this.$axios({
-        method: "post", url: `/api/passenger/login/byDatabaseAcc/`,
+        method: "post", url: `/passenger/login/byDatabaseAcc/`,
         data: {
-          acc: this.loginForm.passengerAcc,
-          pwd: md5(this.loginForm.passengerPwd)
+          passengerAcc: this.loginForm.passengerAcc,
+          passengerPwd: md5(this.loginForm.passengerPwd)
         }
 
       }).then(res => {
         console.log(res.data)
         if (res.data.statusCode == 101) {
-          Toast.success('账号或者密码错误');
+          Toast.success(res.data.message);
 
         } else if (res.data.statusCode == 102) {
-          Toast.success('登入成功');
+          Toast.success(res.data.message);
           router.push({path: "home"})
 
         } else if (res.data.statusCode == 201) {
-          Toast.fail('账号不存在');
+          Toast.fail(res.data.message);
         }
 
       }).catch(err => {
