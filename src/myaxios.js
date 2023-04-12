@@ -1,7 +1,7 @@
 import axios from "axios";
 import Vue from "vue";
 // import myconfig from "../public/front.conf"
-// axios.defaults.baseURL=
+axios.defaults.baseURL= "http://localhost:8080";
 axios.defaults.withCredentials=true
 // axios.defaults.baseURL=myconfig.apiServer
 

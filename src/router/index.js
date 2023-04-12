@@ -17,12 +17,12 @@ Vue.use(TabbarItem);
 Vue.use(VueRouter)
 
 const routes = [
-    //
-    // {
-    //     path: '/',
-    //     name: 'posterView',
-    //     component: PosterView
-    // },
+
+    {
+        path: '/',
+        name: 'posterView',
+        component: PosterView
+    },
 
     {
         path: '/login',

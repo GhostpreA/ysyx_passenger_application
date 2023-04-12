@@ -1,14 +1,9 @@
 <template>
   <div class="home">
-    <div style="margin-top: 30px;">
+    <div>
       <HelloWorld msg="Welcome to Your Vue.js App"/>
     </div>
 
-
-
-    <div class="centre" >
-
-    </div>
 
     <div class="logo">
       <van-image
@@ -55,15 +50,7 @@ export default {
   color: #d81e06;
 }
 
-.centre{
-  width: 360px;
-  height: 260px;
-  border-radius: 15px;/*边框弧度*/
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.63);
-  margin: auto;
-  margin-top: 15px;
-  background-color: rgba(253, 253, 253, 0.6);
-}
+
 
 .logo{
   width:160px;

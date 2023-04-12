@@ -1,6 +1,13 @@
 <template>
   <div>
-    <van-icon name="arrow-left" size="40px" style="margin-top: 35px" @click="back"/>
+
+    <van-nav-bar
+        title="手机号登入"
+        left-text="返回"
+        :fixed=true
+        left-arrow
+        @click-left="onClickLeft"
+    />
     <div class="hint">
       请输入手机号
     </div>
@@ -10,7 +17,6 @@
     </div>
     <div class="userForm">
       <div style="width: 90%; height: 250px; margin: 80px 30px;">
-
         <van-field
             v-model="cellphone"
             name="手机号"
@@ -26,7 +32,7 @@
             placeholder="请输入短信验证码"
         >
           <template #button>
-            <van-button size="small" type="primary">发送验证码</van-button>
+            <van-button size="small" type="primary" @click="getCode">发送验证码</van-button>
           </template>
         </van-field>
         <div style="margin: 16px;">
@@ -39,6 +45,7 @@
 
 <script>
 import router from "@/router";
+import {Notify} from "vant";
 
 export default {
   name: "Verification",
@@ -53,22 +60,25 @@ export default {
     onSubmit(values) {//登入提交表单中内容 Object类型
       console.log('submit', values);
     },
-    back: function () {//返回登入主页面
+    onClickLeft: function () {//返回登入主页面
       router.push({path: "login"})
     },
-    getCode:function () {
 
+    getCode: function () {
       console.log(this.cellphone)
+      Notify({
+        type: 'primary',
+        message: '短信发送成功',
+        duration: 2000,
+      });
       const that = this
       this.$axios({
-        method:"get",
-        baseURL:"http://localhost:8081",
-        url:`/api/passenger/login/getCode/${this.cellphone}`,
-      }).then(res=>{
+        method: "get",
+        url: `/api/passenger/login/getCode/${this.cellphone}`,
+      }).then(res => {
         console.log(res.status)
 
-
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err)
       })
 
@@ -79,7 +89,7 @@ export default {
 
 <style scoped>
 .hint {
-  margin-top: 50px;
+  margin-top: 20%;
   margin-left: 40px;
   font-size: 35px;
   font-weight: bold;
@@ -90,7 +100,7 @@ export default {
 .userForm {
   width: 100%;
   height: 600px;
-  margin-top: 70px;
+  margin-top: 50px;
   background-color: rgba(253, 253, 253, 0.6);
   border-radius: 15px; /*边框弧度*/
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.63);

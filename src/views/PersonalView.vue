@@ -12,7 +12,7 @@
               round
               width="6rem"
               height="6rem"
-              :src="require('../img/logo.png')"
+              :src="require('../img/logo2.png')"
           />
         </div>
         <div class="personInfo" style="display: inline-block;margin-top: -60px;font-size: 20px">
