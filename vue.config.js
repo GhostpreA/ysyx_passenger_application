@@ -6,19 +6,19 @@ module.exports = defineConfig({
     // filenameHashing:false,
     devServer: {
         proxy: {
-            "/passenger": {
-                target: "http://localhost:8010",
-                changeOrigin: true,
-                pathRewrite: {
-                    "^/passenger": "/passenger"
-                }
-            },
+            // "/passenger": {
+            //     target: "http://localhost:8010",
+            //     changeOrigin: true,
+            //     pathRewrite: {
+            //         "^/passenger": "/passenger"
+            //     }
+            // },
 
-            "/order": {
+            "/ysyx_order": {
                 target: "http://localhost:8340",
                 changeOrigin: true,
                 pathRewrite: {
-                    "^/order": "/order"
+                    "^/ysyx_order": ""
                 }
             }
         }

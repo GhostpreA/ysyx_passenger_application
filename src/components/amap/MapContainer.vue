@@ -290,21 +290,31 @@ export default {
             console.log("终点纬度" + result.end.location.lat);
             console.log("距离" + result.routes[0].distance + "米");//公里数单位米----------------------------
             console.log("时间" + result.routes[0].time + "秒");//时间数单位秒----------------------------
+           let  startName1=    result.start.name;
+
+
+             let   startLongitude1= result.destination.lng;//起点经度
+
+                let    startLatitude1= result.destination.lat;//起点纬度
+                let    endName1=result.destinationName;//终点名
+                let    endLongitude1= result.end.location.lng;//终点经度
+                let    endLatitude1= result.end.location.lat;//终点纬度
+
 
             var kilometre = result.routes[0].distance / 1000
             var tiemNum = result.routes[0].time / 60;
             that.$axios({
-              method: "post", url: `http://localhost:8080/order/passenger/takecar`,//:8340
+              method: "post", url: `http://localhost:8080/ysyx_order/order/passenger/takecar`,//:8340
               params: {
                 // acc: this.loginForm.passengerAcc,
                 // pwd: md5(this.loginForm.passengerPwd)
-                passengerId:that.$store.state.passengerInfo.passengerId,
-                startName: result.start.name,//起点名
-                startLongitude: result.destination.lng,//起点经度
-                startLatitude: result.destination.lat,//起点纬度
-                endName: result.destinationName,//终点名
-                endLongitude: result.end.location.lng,//终点经度
-                endLatitude: result.end.location.lat,//终点纬度
+                passengerId:1,//that.$store.state.passengerInfo.passengerId
+                startName: startName1,//起点名
+                startLongitude: startLongitude1,//起点经度
+                startLatitude: startLatitude1,//起点纬度
+                endName: endName1,//终点名
+                endLongitude: endLongitude1,//终点经度
+                endLatitude:  endLatitude1,//终点纬度
                 mileage: kilometre,//历程“米”
 
               }
