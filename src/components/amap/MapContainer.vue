@@ -30,7 +30,7 @@
         />
       </van-cell-group>
 
-      <van-button style="width: 220px;margin: 20px 20%" @click="navigation"
+      <van-button style="width: 220px;margin: 20px 20%" @click="placeAnOrder"
                   color="linear-gradient(to right, rgb(143 198 240), rgb(62 83 198))">
         开始打车
       </van-button>
@@ -247,8 +247,13 @@ export default {
       })
     },
 
-    // 导航
-    navigation() {
+
+
+
+
+
+    // 下单
+    placeAnOrder() {
       if (this.driving) {
         console.log("删除")
         this.driving.clear();
@@ -261,7 +266,7 @@ export default {
       }).then((AMap) => {
         //构造路线导航类----------------------------
         this.driving = new AMap.Driving({
-          map: this.map,//是否需要地图指引
+          // map: this.map,//是否需要地图指引
           // panel: "panel"//路线导航
         });
 
@@ -289,10 +294,11 @@ export default {
             var kilometre = result.routes[0].distance / 1000
             var tiemNum = result.routes[0].time / 60;
             that.$axios({
-              method: "get", url: `/takecar/order/passenger/takecar/`,
+              method: "get", url: `http://124.71.167.112:8340/order/passenger/takecar/`,
               params: {
                 // acc: this.loginForm.passengerAcc,
                 // pwd: md5(this.loginForm.passengerPwd)
+                passengerId:this.$store.state.passengerInfo.passengerId,
                 startName: result.start.name,//起点名
                 startLongitude: result.destination.lng,//起点经度
                 startLatitude: result.destination.lat,//起点纬度
@@ -300,6 +306,7 @@ export default {
                 endLongitude: result.end.location.lng,//终点经度
                 endLatitude: result.end.location.lat,//终点纬度
                 mileage: kilometre,//历程“米”
+
               }
 
             }).then(res => {

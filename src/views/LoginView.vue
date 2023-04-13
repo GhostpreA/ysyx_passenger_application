@@ -87,6 +87,7 @@ export default {
         } else if (res.data.statusCode == 102) {
           Toast.success(res.data.message);
           router.push({path: "home"})
+          this.$store.state.passengerInfo=res.data.list[0]
 
         } else if (res.data.statusCode == 201) {
           Toast.fail(res.data.message);

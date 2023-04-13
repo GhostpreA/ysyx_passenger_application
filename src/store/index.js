@@ -9,9 +9,7 @@ export default new Vuex.Store({
     state: {
         //乘客信息 对象
         passengerInfo: '',
-        //高德key
-        gdKey:"738506afec3b63bf7c978eb468906f10",
-        gdCode:"ba6797411b09136c88583c486cf395cf"
+
     },
 
     //唯一取值的方法，计算属性
