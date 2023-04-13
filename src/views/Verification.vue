@@ -74,7 +74,7 @@ export default {
       const that = this
       this.$axios({
         method: "get",
-        url: `/api/passenger/login/getCode/${this.cellphone}`,
+        url: `/passenger/login/getCode/${this.cellphone}`,
       }).then(res => {
         console.log(res.status)
 

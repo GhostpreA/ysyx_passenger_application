@@ -54,12 +54,12 @@ import router from "@/router";
 import {mapActions} from "vuex";
 import {Dialog, Toast} from "vant";
 import md5 from 'js-md5';
+import myconf from "../../public/front.conf";
 
 export default {
   name: "Login",
   data() {
     return {
-
       loginForm: {
         passengerAcc: '',
         passengerPwd: '',
@@ -71,10 +71,9 @@ export default {
 
     ...mapActions(["savePassengerInfoAction"]),
     clickLogin: function () {
-      // router.push({path: "home"})
       const that = this
       this.$axios({
-        method: "post", url: `/passenger/login/byDatabaseAcc/`,
+        method: "post", url: `http://124.71.167.112:8080/passenger/login/byDatabaseAcc`,
         data: {
           passengerAcc: this.loginForm.passengerAcc,
           passengerPwd: md5(this.loginForm.passengerPwd)

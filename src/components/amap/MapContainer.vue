@@ -51,7 +51,7 @@ import {Toast} from "vant";
 import router from "@/router";
 
 window._AMapSecurityConfig = {
-  securityJsCode: 'ba6797411b09136c88583c486cf395cf'//密匙
+  securityJsCode:myconf.gdCode//密匙
 }
 export default {
   name: "MapContainer",
@@ -66,7 +66,8 @@ export default {
       passengerOrigin: "",  //定位乘客位置
       passengerOriginText: "",//定位乘客地址
       passengerFinishText: "",//乘客的终点
-      myKey:"738506afec3b63bf7c978eb468906f10",//key
+      myKey:myconf.gdKey,//key
+
       driving: null  //路线
 
 
