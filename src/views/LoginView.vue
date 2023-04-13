@@ -73,7 +73,7 @@ export default {
     clickLogin: function () {
       const that = this
       this.$axios({
-        method: "post", url: `http://124.71.167.112:8080/passenger/login/byDatabaseAcc`,
+        method: "post", url: `:8080/passenger/login/byDatabaseAcc`,
         data: {
           passengerAcc: this.loginForm.passengerAcc,
           passengerPwd: md5(this.loginForm.passengerPwd)

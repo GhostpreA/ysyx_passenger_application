@@ -294,11 +294,11 @@ export default {
             var kilometre = result.routes[0].distance / 1000
             var tiemNum = result.routes[0].time / 60;
             that.$axios({
-              method: "get", url: `http://124.71.167.112:8340/order/passenger/takecar/`,
+              method: "post", url: `http://localhost:8080/order/passenger/takecar`,//:8340
               params: {
                 // acc: this.loginForm.passengerAcc,
                 // pwd: md5(this.loginForm.passengerPwd)
-                passengerId:this.$store.state.passengerInfo.passengerId,
+                passengerId:that.$store.state.passengerInfo.passengerId,
                 startName: result.start.name,//起点名
                 startLongitude: result.destination.lng,//起点经度
                 startLatitude: result.destination.lat,//起点纬度

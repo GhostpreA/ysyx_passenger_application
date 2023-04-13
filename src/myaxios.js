@@ -3,7 +3,7 @@ import Vue from "vue";
 // import myconf from "/public/front.conf.js"
 // axios.defaults.baseURL= "http://localhost:8080";
 // axios.defaults.withCredentials=true
-axios.defaults.baseURL=myconf.passengerServer;
+// axios.defaults.baseURL=myconf.passengerServer;
 axios.gdKey=myconf.gdKey
 axios.gdCode=myconf.gdCode
 
