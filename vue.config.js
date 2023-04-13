@@ -7,7 +7,7 @@ module.exports = defineConfig({
     // devServer: {
     //     proxy: {
     //         "/passenger": {
-    //             target: "http://localhost:8010",
+    //             target: "http://124.71.167.112:8010",
     //             changeOrigin: true,
     //             pathRewrite: {
     //                 "^/passenger": "/passenger"

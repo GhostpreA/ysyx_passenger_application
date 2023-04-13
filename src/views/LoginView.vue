@@ -73,7 +73,6 @@ export default {
     clickLogin: function () {
       // router.push({path: "home"})
       const that = this
-
       this.$axios({
         method: "post", url: `/passenger/login/byDatabaseAcc/`,
         data: {

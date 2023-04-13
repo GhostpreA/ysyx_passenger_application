@@ -66,7 +66,7 @@ export default {
       passengerOrigin: "",  //定位乘客位置
       passengerOriginText: "",//定位乘客地址
       passengerFinishText: "",//乘客的终点
-      myKey: "738506afec3b63bf7c978eb468906f10",//key
+      myKey:"738506afec3b63bf7c978eb468906f10",//key
       driving: null  //路线
 
 
