@@ -311,6 +311,20 @@ export default {
 
             }).then(res => {
               console.log(res.data)
+              if (res.data.statusCode == 101) {
+                Toast.success("乘客下单成功");
+                console.log(res.data.list[0])//订单数据
+
+              } else if (res.data.statusCode == 201) {
+                Toast.success("起点区域未开通服务");
+
+
+              } else if (res.data.statusCode == 301) {
+                Toast.fail("终点区域未开通服务");
+              }
+
+
+
             }).catch(err => {
               console.log(err)
             })
