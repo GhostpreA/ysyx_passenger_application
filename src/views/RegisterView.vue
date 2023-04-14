@@ -83,8 +83,6 @@ import router from "@/router";
 
 export default {
 
-
-
   name: "registerView",
   data() {
     return {
