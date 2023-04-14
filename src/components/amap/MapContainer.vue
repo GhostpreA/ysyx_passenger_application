@@ -57,8 +57,21 @@
             <van-icon name="guide-o"/>
             目的地：{{ passengerFinishText }}
           </van-col>
+
         </van-row>
         <van-divider :style="{ color: '#96a6af', borderColor: '#96a6af', padding: '0 16px' }"></van-divider>
+        <van-row>
+          <van-col span="6">
+            <van-count-down  ref="countDown" :time="time" format=" mm 分 ss 秒"/>
+          </van-col>
+          <van-col offset="4" span="6">
+            等待接单
+          </van-col>
+        </van-row>
+
+<!--        <div style="display: inline-block"></div>-->
+
+
         <div style="text-align: center">
           <van-button size="large" type="primary" @click="cancellation">取消订单</van-button>
         </div>
@@ -111,8 +124,9 @@ export default {
       kilometre: "",//公里
       price: "",//价格
       min: 0,
-      max: 1,
-      timer: null //定时器名称
+      max: 10,
+      timer: null, //定时器名称
+      time: 5 * 60 * 1000,
 
     }
   },
@@ -253,14 +267,14 @@ export default {
       this.shgowCentre = false;//选择位置界面
       this.showForm = true;//订单详情界面 可取消订单
 
-          that.timer = setInterval(() => {//定时器开始
-            that.min++;//每分钟加1
-            console.log("dz")
-            if (that.min == that.max) {//min=max时停止计时
-              alert("dz")
-              clearInterval(that.timer);// 满足条件时 停止计时
-            }
-          }, 60000)
+      that.timer = setInterval(() => {//定时器开始
+        that.min++;//每分钟加1
+        console.log("place1111111")
+        if (that.min == that.max) {//min=max时停止计时
+          alert("dz")
+          clearInterval(that.timer);// 满足条件时 停止计时
+        }
+      }, 1000)
 
       // that.$axios({
       //   method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
@@ -272,7 +286,7 @@ export default {
       //     endName: that.endName1,//终点名
       //     endLongitude: that.endLongitude1,//终点经度
       //     endLatitude: that.endLatitude1,//终点纬度
-      //     mileage: that.kilometre,//历程“米”
+      //     orderMileage: that.kilometre,//历程“米”
       //
       //   }
       //
@@ -304,6 +318,9 @@ export default {
 
       this.shgowCentre = true;
       this.showForm = false;
+      clearInterval(this.timer);// 停止计时
+      this.min=0;//计时归零
+      this.$refs.countDown.reset();
     },
 
 
@@ -528,4 +545,17 @@ export default {
   overflow: hidden;
 }
 
+/*.colon {*/
+/*  display: inline-block;*/
+/*  margin: 0 4px;*/
+/*  color: #ee0a24;*/
+/*}*/
+/*.block {*/
+/*  display: inline-block;*/
+/*  width: 22px;*/
+/*  color: #fff;*/
+/*  font-size: 15px;*/
+/*  text-align: center;*/
+/*  background-color: #93ee0a;*/
+/*}*/
 </style>
