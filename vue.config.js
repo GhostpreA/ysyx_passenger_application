@@ -11,7 +11,7 @@ module.exports = defineConfig({
                 target: "http://localhost:8010",
                 changeOrigin: true,
                 pathRewrite: {
-                    "^/ysyx_passengerinfo": ""
+                    "^/ysyx_pasasengerinfo": ""
                 }
             },
 

@@ -17,60 +17,60 @@
 
     <div class="userForm">
       <div style="width: 90%; height: 280px; margin: 60px 20px;">
-          <van-field
-              v-model="username"
-              name="昵称"
-              label="用户名"
-              placeholder="昵称"
-              :rules="[{ required: true, message: '请填写昵称' }]"
-          />
-          <van-field
-              name="手机号"
-              type="tel"
-              label="手机号"
-              placeholder="手机号"
-              :value="cellphone"
-              @touchstart.native.stop="cellphoneShow = true"
-              :rules="[{ required: true, message: '请填写手机号' }]"
-          />
+        <van-field
+            v-model="username"
+            name="昵称"
+            label="用户名"
+            placeholder="昵称"
+            :rules="[{ required: true, message: '请填写昵称' }]"
+        />
+        <van-field
+            name="手机号"
+            type="tel"
+            label="手机号"
+            placeholder="手机号"
+            :value="cellphone"
+            @touchstart.native.stop="cellphoneShow = true"
+            :rules="[{ required: true, message: '请填写手机号' }]"
+        />
 
-          <!--手机号码数字键盘-->
-          <van-number-keyboard
-              v-model="cellphone"
-              :show="cellphoneShow"
-              :maxlength="13"
-              @blur="cellphoneShow = false"
-          />
-          <van-field
-              v-model="sms"
-              center
-              clearable
-              label="短信验证码"
-              placeholder="请输入短信验证码"
-          >
-            <template #button>
-              <van-button size="small" type="primary">发送验证码</van-button>
-            </template>
-          </van-field>
+        <!--手机号码数字键盘-->
+        <van-number-keyboard
+            v-model="cellphone"
+            :show="cellphoneShow"
+            :maxlength="13"
+            @blur="cellphoneShow = false"
+        />
+        <van-field
+            v-model="sms"
+            center
+            clearable
+            label="短信验证码"
+            placeholder="请输入短信验证码"
+        >
+          <template #button>
+            <van-button size="small" type="primary">发送验证码</van-button>
+          </template>
+        </van-field>
 
-          <van-field
-              v-model="password"
-              type="password"
-              name="密码"
-              label="密码"
-              placeholder="密码"
-              :rules="[{ required: true, message: '请填写密码' }]"
-          />
-          <van-field
-              v-model="redoPwd"
-              type="password"
-              name="重复密码"
-              label="重复密码"
-              placeholder="重复密码"
-          />
-          <div style="margin: 16px;">
-            <van-button round block type="info" native-type="submit">注册</van-button>
-          </div>
+        <van-field
+            v-model="password"
+            type="password"
+            name="密码"
+            label="密码"
+            placeholder="密码"
+            :rules="[{ required: true, message: '请填写密码' }]"
+        />
+        <van-field
+            v-model="redoPwd"
+            type="password"
+            name="重复密码"
+            label="重复密码"
+            placeholder="重复密码"
+        />
+        <div style="margin: 16px;">
+          <van-button round block type="info" native-type="submit" @click="registerBtn">注册</van-button>
+        </div>
       </div>
     </div>
 
@@ -80,6 +80,7 @@
 
 <script>
 import router from "@/router";
+import {Toast} from "vant";
 
 export default {
 
@@ -89,17 +90,35 @@ export default {
       username: '',
       cellphone: '',
       password: '',
-      redoPwd:'',
+      redoPwd: '',
+      sms: '',
       cellphoneShow: false,
     };
   },
   methods: {
-    onSubmit(values) {//登入提交表单中内容 Object类型
-      console.log('submit', values);
+
+    registerBtn: function () {
+      //
+      // if (this.username != "" || this.cellphone != "" || this.password != "" || this.redoPwd != "") {
+      //   if (this.password == this.redoPwd) {
+      //     const that =this
+      //     this.$axios({
+      //       method:'post',
+      //       url:`:8081/ysyx_passengerinfo/passenger/register`,
+      //       data:{
+      //
+      //       }
+      //     })
+      //   } else {
+      //     Toast.fail("两次密码不一致");
+      //   }
+      // } else {
+      //   Toast.fail("请填写完整");
+      // }
     },
 
-    onClickLeft:function () {
-     router.push({path:"login"})
+    onClickLeft: function () {
+      router.push({path: "login"})
     },
 
   },

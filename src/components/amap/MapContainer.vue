@@ -10,33 +10,60 @@
 
 
     <div id="container"></div>
-    <div class="centre">
+    <div class="centre" v-show="shgowCentre">
       <br>
       <br>
-
       <van-cell-group>
         <van-field
             v-model="passengerOriginText"
             left-icon="location"
             disabled
         />
-        <van-divider
-            :style="{ color: '#0080ff', borderColor: '#007fff', padding: '0 16px' }"
-        >
-        </van-divider>
+        <van-divider :style="{ color: '#0080ff', borderColor: '#007fff', padding: '0 16px' }"></van-divider>
         <van-field
+            v-model="passengerFinishText"
             id='tipinput'
             left-icon="share"
         />
+        <van-divider :style="{ color: '#0080ff', borderColor: '#007fff', padding: '0 16px' }"></van-divider>
+        <span>距离：{{ kilometre }}</span>
+        <div>价格：{{ price }}</div>
       </van-cell-group>
 
-      <van-button style="width: 220px;margin: 20px 20%" @click="placeAnOrder"
+      <van-button style="width: 220px;margin: 40px 20%" @click="placeAnOrder"
                   color="linear-gradient(to right, rgb(143 198 240), rgb(62 83 198))">
         开始打车
       </van-button>
 
     </div>
 
+
+    <div class="Form" style="font-size: 18px" v-show="showForm">
+      <div style="margin: 30px;">
+        <van-row type="flex" justify="space-between">
+          <van-col span="6">距离：{{ kilometre }}</van-col>
+          <van-col span="10">价格：{{ price }}</van-col>
+        </van-row>
+      </div>
+      <van-divider :style="{ color: '#96a6af', borderColor: '#96a6af', padding: '0 16px' }"></van-divider>
+      <div style="margin: 30px;">
+        <van-row type="flex" justify="space-between">
+          <van-col span="24" v-model="passengerOriginText">
+            <van-icon name="location-o"/>
+            出发地：{{ passengerOriginText }}
+          </van-col>
+          <div style="height: 80px"></div>
+          <van-col span="24" v-model="passengerFinishText">
+            <van-icon name="guide-o"/>
+            目的地：{{ passengerFinishText }}
+          </van-col>
+        </van-row>
+        <van-divider :style="{ color: '#96a6af', borderColor: '#96a6af', padding: '0 16px' }"></van-divider>
+        <div style="text-align: center">
+          <van-button size="large" type="primary" @click="cancellation">取消订单</van-button>
+        </div>
+      </div>
+    </div>
 
   </div>
 
@@ -46,12 +73,13 @@
 <script>
 
 import AMapLoader from '@amap/amap-jsapi-loader';
+import {Dialog} from 'vant';
 import md5 from "js-md5";
 import {Toast} from "vant";
 import router from "@/router";
 
 window._AMapSecurityConfig = {
-  securityJsCode:myconf.gdCode//密匙
+  securityJsCode: myconf.gdCode//密匙
 }
 export default {
   name: "MapContainer",
@@ -66,10 +94,25 @@ export default {
       passengerOrigin: "",  //定位乘客位置
       passengerOriginText: "",//定位乘客地址
       passengerFinishText: "",//乘客的终点
-      myKey:myconf.gdKey,//key
+      myKey: myconf.gdKey,//key
+      driving: null,  //路线
 
-      driving: null  //路线
 
+      shgowCentre: true,//选择位置界面
+      showForm: false,//订单详情界面 可取消订单
+
+      startLongitude1: "",//起点经度
+      startLatitude1: "",//起点纬度
+      endLongitude1: "",//终点经度
+      endLatitude1: "",//终点纬度
+
+      startName1: "",//起点名
+      endName1: "",//终点名
+      kilometre: "",//公里
+      price: "",//价格
+      min: 0,
+      max: 1,
+      timer: null //定时器名称
 
     }
   },
@@ -151,6 +194,8 @@ export default {
           auto.on("select", select);//注册监听，当选中某条记录时会触发
           function select(e) {
             that.passengerFinishText = e.poi.name
+            that.showPlaceAnOrder();
+
             // placeSearch.setCity(e.poi.adcode);
             // placeSearch.search(e.poi.name);  //关键字查询查询
           }
@@ -159,6 +204,222 @@ export default {
         console.log(e);
       })
     },
+
+    //经纬度转文字定位
+    translatePositional(id) {
+      console.log("经纬度转文字定位")
+      AMapLoader.load({
+        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
+        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        plugins: ["AMap.Geocoder"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      }).then((AMap) => {
+        console.log("经纬度转文字定位回来")
+        var geocoder = new AMap.Geocoder({
+          city: "010", //城市设为北京，默认：“全国”
+          radius: 1000 //范围，默认：500
+        });
+        // 新建组件
+        var marker = new AMap.Marker();
+        regeoCode()
+        // // 保存this指向
+        const that = this
+
+        function regeoCode() {
+          var lnglat = id  //传入定位的id--------------------------------------------------------------
+          marker.setPosition(lnglat);
+          geocoder.getAddress(lnglat, function (status, result) {
+            if (status === 'complete' && result.regeocode) {
+              console.log(result.regeocode.formattedAddress)
+              that.passengerOriginText = result.regeocode.formattedAddress    //更改起点参数为定位------------------------------
+            } else {
+              console.log('根据经纬度查询地址失败');
+            }
+          });
+        }
+
+        // 添加进入
+        this.map.add(marker);
+      }).catch(e => {
+        console.log(e);
+      })
+    },
+
+
+    //下单
+    placeAnOrder: function () {
+
+      const that = this
+
+      this.shgowCentre = false;//选择位置界面
+      this.showForm = true;//订单详情界面 可取消订单
+
+          that.timer = setInterval(() => {//定时器开始
+            that.min++;//每分钟加1
+            console.log("dz")
+            if (that.min == that.max) {//min=max时停止计时
+              alert("dz")
+              clearInterval(that.timer);// 满足条件时 停止计时
+            }
+          }, 60000)
+
+      // that.$axios({
+      //   method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
+      //   params: {
+      //     passengerId: 1,//that.$store.state.passengerInfo.passengerId
+      //     startName: that.startName1,//起点名
+      //     startLongitude: that.startLongitude1,//起点经度
+      //     startLatitude: that.startLatitude1,//起点纬度
+      //     endName: that.endName1,//终点名
+      //     endLongitude: that.endLongitude1,//终点经度
+      //     endLatitude: that.endLatitude1,//终点纬度
+      //     mileage: that.kilometre,//历程“米”
+      //
+      //   }
+      //
+      // }).then(res => {
+      //   console.log(res.data)
+      //   if (res.data.statusCode == 101) {
+      //     Toast.success("乘客下单成功");
+      //     console.log(res.data.list[0])//订单数据
+      //
+
+      //
+      //
+      //   } else if (res.data.statusCode == 201) {
+      //     Toast.success("起点区域未开通服务");
+      //
+      //
+      //   } else if (res.data.statusCode == 301) {
+      //     Toast.fail("终点区域未开通服务");
+      //   }
+      //
+      // }).catch(err => {
+      //   console.log(err)
+      // })
+
+    },
+
+
+    cancellation: function () {
+
+      this.shgowCentre = true;
+      this.showForm = false;
+    },
+
+
+    //展示信息
+    showPlaceAnOrder() {
+      if (this.driving) {
+        console.log("删除")
+        this.driving.clear();
+      }
+      const that = this;
+      AMapLoader.load({
+        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
+        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        plugins: ["AMap.Driving"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      }).then((AMap) => {
+        //构造路线导航类----------------------------
+        this.driving = new AMap.Driving({
+          // map: this.map,//是否需要地图指引
+          // panel: "panel"//路线导航
+        });
+
+        // 根据起终点经纬度规划驾车导航路线
+        // console.log(this.passengerOrigin + "起点")
+
+        // 根据起终点名称规划驾车导航路线
+        this.driving.search([
+          {keyword: this.passengerOriginText, city: '福州'},//起点
+          {keyword: this.passengerFinishText, city: '福州'}//终点
+        ], function (status, result) {
+          // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+          if (status === 'complete') {
+            console.log(result)
+            console.log("起点名" + result.start.name)
+            console.log("起点经度" + result.destination.lng)
+            console.log("起点纬度" + result.destination.lat)
+
+            console.log("终点名" + result.destinationName)
+            console.log("终点经度" + result.end.location.lng);
+            console.log("终点纬度" + result.end.location.lat);
+            console.log("距离" + result.routes[0].distance + "米");//公里数单位米----------------------------
+            console.log("时间" + result.routes[0].time + "秒");//时间数单位秒----------------------------
+            that.startName1 = result.start.name;
+
+
+            let startLongitude1 = result.destination.lng;//起点经度
+
+            let startLatitude1 = result.destination.lat;//起点纬度
+            that.endName1 = result.destinationName;//终点名
+            let endLongitude1 = result.end.location.lng;//终点经度
+            let endLatitude1 = result.end.location.lat;//终点纬度
+
+
+            that.kilometre = result.routes[0].distance / 1000 //公里
+            var priceNum = that.kilometre * 1.7 + result.routes[0].time / 60;//价格
+            if (priceNum >= 10) {
+              that.price = priceNum.toFixed(2)
+            } else if (priceNum <= 10) {
+              that.price = 10;
+            }
+
+
+          } else {
+            console.log(('获取驾车数据失败：' + result));
+          }
+        });
+
+      }).catch(e => {
+        console.log(e);
+      })
+    },
+
+
+    // 自定义导航  起点名  终点名
+    customNavigation(startText, finishText) {
+      if (this.driving) {
+        console.log("删除")
+        this.driving.clear();
+
+      }
+      AMapLoader.load({
+        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
+        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        plugins: ["AMap.Driving"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      }).then((AMap) => {
+        //构造路线导航类----------------------------
+        this.driving = new AMap.Driving({
+          map: this.map,//是否需要地图指引------------------
+          panel: "panel"//路线导航-------------------
+        });
+
+        // 根据起终点经纬度规划驾车导航路线
+        console.log(this.passengerOrigin + "起点")
+
+        // 根据起终点名称规划驾车导航路线
+        this.driving.search([
+          {keyword: startText, city: '福州'},//起点
+          {keyword: finishText, city: '福州'}//终点
+        ], function (status, result) {
+          // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+          if (status === 'complete') {
+            console.log('绘制驾车路线完成');
+            console.log(result);
+            console.log(result.routes[0].distance);//公里数单位米----------------------------
+            console.log(result.routes[0].time);//时间数单位秒----------------------------
+
+          } else {
+            console.log(('获取驾车数据失败：' + result));
+          }
+        });
+
+      }).catch(e => {
+        console.log(e);
+      })
+    },
+
+
     //   定位
     positioning() {
       AMapLoader.load({
@@ -208,189 +469,6 @@ export default {
         console.log(e);
       })
     },
-    //经纬度转文字定位
-    translatePositional(id) {
-      console.log("经纬度转文字定位")
-      AMapLoader.load({
-        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
-        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        plugins: ["AMap.Geocoder"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-      }).then((AMap) => {
-        console.log("经纬度转文字定位回来")
-        var geocoder = new AMap.Geocoder({
-          city: "010", //城市设为北京，默认：“全国”
-          radius: 1000 //范围，默认：500
-        });
-        // 新建组件
-        var marker = new AMap.Marker();
-        regeoCode()
-        // // 保存this指向
-        const that = this
-
-        function regeoCode() {
-          var lnglat = id  //传入定位的id--------------------------------------------------------------
-          marker.setPosition(lnglat);
-          geocoder.getAddress(lnglat, function (status, result) {
-            if (status === 'complete' && result.regeocode) {
-              console.log(result.regeocode.formattedAddress)
-              that.passengerOriginText = result.regeocode.formattedAddress    //更改起点参数为定位------------------------------
-            } else {
-              console.log('根据经纬度查询地址失败');
-            }
-          });
-        }
-
-        // 添加进入
-        this.map.add(marker);
-      }).catch(e => {
-        console.log(e);
-      })
-    },
-
-
-
-
-
-
-    // 下单
-    placeAnOrder() {
-      if (this.driving) {
-        console.log("删除")
-        this.driving.clear();
-      }
-      const that = this;
-      AMapLoader.load({
-        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
-        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        plugins: ["AMap.Driving"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-      }).then((AMap) => {
-        //构造路线导航类----------------------------
-        this.driving = new AMap.Driving({
-          // map: this.map,//是否需要地图指引
-          // panel: "panel"//路线导航
-        });
-
-        // 根据起终点经纬度规划驾车导航路线
-        // console.log(this.passengerOrigin + "起点")
-
-        // 根据起终点名称规划驾车导航路线
-        this.driving.search([
-          {keyword: this.passengerOriginText, city: '福州'},//起点
-          {keyword: this.passengerFinishText, city: '福州'}//终点
-        ], function (status, result) {
-          // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
-          if (status === 'complete') {
-            console.log(result)
-            console.log("起点名" + result.start.name)
-            console.log("起点经度" + result.destination.lng)
-            console.log("起点纬度" + result.destination.lat)
-
-            console.log("终点名" + result.destinationName)
-            console.log("终点经度" + result.end.location.lng);
-            console.log("终点纬度" + result.end.location.lat);
-            console.log("距离" + result.routes[0].distance + "米");//公里数单位米----------------------------
-            console.log("时间" + result.routes[0].time + "秒");//时间数单位秒----------------------------
-           let  startName1=    result.start.name;
-
-
-             let   startLongitude1= result.destination.lng;//起点经度
-
-                let    startLatitude1= result.destination.lat;//起点纬度
-                let    endName1=result.destinationName;//终点名
-                let    endLongitude1= result.end.location.lng;//终点经度
-                let    endLatitude1= result.end.location.lat;//终点纬度
-
-
-            var kilometre = result.routes[0].distance / 1000
-            var tiemNum = result.routes[0].time / 60;
-            that.$axios({
-              method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
-              params: {
-                // acc: this.loginForm.passengerAcc,
-                // pwd: md5(this.loginForm.passengerPwd)
-                passengerId:1,//that.$store.state.passengerInfo.passengerId
-                startName: startName1,//起点名
-                startLongitude: startLongitude1,//起点经度
-                startLatitude: startLatitude1,//起点纬度
-                endName: endName1,//终点名
-                endLongitude: endLongitude1,//终点经度
-                endLatitude:  endLatitude1,//终点纬度
-                mileage: kilometre,//历程“米”
-
-              }
-
-            }).then(res => {
-              console.log(res.data)
-              if (res.data.statusCode == 101) {
-                Toast.success("乘客下单成功");
-                console.log(res.data.list[0])//订单数据
-
-              } else if (res.data.statusCode == 201) {
-                Toast.success("起点区域未开通服务");
-
-
-              } else if (res.data.statusCode == 301) {
-                Toast.fail("终点区域未开通服务");
-              }
-
-
-
-            }).catch(err => {
-              console.log(err)
-            })
-
-
-          } else {
-            console.log(('获取驾车数据失败：' + result));
-          }
-        });
-
-      }).catch(e => {
-        console.log(e);
-      })
-    },
-    // 自定义导航  起点名  终点名
-    customNavigation(startText, finishText) {
-      if (this.driving) {
-        console.log("删除")
-        this.driving.clear();
-
-      }
-      AMapLoader.load({
-        key: this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
-        version: "2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        plugins: ["AMap.Driving"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-      }).then((AMap) => {
-        //构造路线导航类----------------------------
-        this.driving = new AMap.Driving({
-          map: this.map,//是否需要地图指引------------------
-          panel: "panel"//路线导航-------------------
-        });
-
-        // 根据起终点经纬度规划驾车导航路线
-        console.log(this.passengerOrigin + "起点")
-
-        // 根据起终点名称规划驾车导航路线
-        this.driving.search([
-          {keyword: startText, city: '福州'},//起点
-          {keyword: finishText, city: '福州'}//终点
-        ], function (status, result) {
-          // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
-          if (status === 'complete') {
-            console.log('绘制驾车路线完成');
-            console.log(result);
-            console.log(result.routes[0].distance);//公里数单位米----------------------------
-            console.log(result.routes[0].time);//时间数单位秒----------------------------
-
-          } else {
-            console.log(('获取驾车数据失败：' + result));
-          }
-        });
-
-      }).catch(e => {
-        console.log(e);
-      })
-    },
     //   搜索
     passengerFinishSearch() {
 
@@ -432,7 +510,7 @@ export default {
 
 .centre {
   width: 95%;
-  height: 260px;
+  height: 360px;
   border-radius: 15px; /*边框弧度*/
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.63);
   margin: 20px auto;
@@ -440,5 +518,14 @@ export default {
   background-color: rgba(253, 253, 253, 0.6);
 }
 
+.Form {
+  width: 95%;
+  height: 360px;
+  margin: 30px auto;
+  background-color: rgba(253, 253, 253, 0.6);
+  border-radius: 5px; /*边框弧度*/
+  box-shadow: 0 0 10px rgba(42, 41, 41, 0.33);
+  overflow: hidden;
+}
 
 </style>

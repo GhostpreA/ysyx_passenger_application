@@ -5,7 +5,10 @@ import store from './store'
 import Vant, {Field, Form} from 'vant';
 import 'vant/lib/index.css';
 import './myaxios.js'
+import { Dialog } from 'vant';
 
+// 全局注册
+Vue.use(Dialog);
 Vue.use(Form);
 Vue.use(Field);
 Vue.use(Vant);

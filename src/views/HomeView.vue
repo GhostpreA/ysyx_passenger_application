@@ -5,11 +5,11 @@
     </div>
 
 
-    <div class="logo">
-      <van-image
-          :src="require('../img/logo.png')"
-      />
-    </div>
+<!--    <div class="logo">-->
+<!--      <van-image-->
+<!--          :src="require('../img/logo.png')"-->
+<!--      />-->
+<!--    </div>-->
 
     <van-tabbar v-model="active">
       <van-tabbar-item icon="home-o" >首页</van-tabbar-item>
