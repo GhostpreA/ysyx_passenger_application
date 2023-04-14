@@ -4,6 +4,7 @@ module.exports = defineConfig({
     // assetsDir: 'assets',
     // publicPath:'./',
     // filenameHashing:false,
+    //
     devServer: {
         proxy: {
             "/ysyx_passengerinfo": {
