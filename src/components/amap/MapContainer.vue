@@ -30,7 +30,7 @@
         />
       </van-cell-group>
 
-      <van-button style="width: 220px;margin: 20px 20%" @click="navigation"
+      <van-button style="width: 220px;margin: 20px 20%" @click="placeAnOrder"
                   color="linear-gradient(to right, rgb(143 198 240), rgb(62 83 198))">
         开始打车
       </van-button>
@@ -51,7 +51,7 @@ import {Toast} from "vant";
 import router from "@/router";
 
 window._AMapSecurityConfig = {
-  securityJsCode: 'ba6797411b09136c88583c486cf395cf'//密匙
+  securityJsCode:myconf.gdCode//密匙
 }
 export default {
   name: "MapContainer",
@@ -66,7 +66,8 @@ export default {
       passengerOrigin: "",  //定位乘客位置
       passengerOriginText: "",//定位乘客地址
       passengerFinishText: "",//乘客的终点
-      myKey: "738506afec3b63bf7c978eb468906f10",//key
+      myKey:myconf.gdKey,//key
+
       driving: null  //路线
 
 
@@ -246,8 +247,13 @@ export default {
       })
     },
 
-    // 导航
-    navigation() {
+
+
+
+
+
+    // 下单
+    placeAnOrder() {
       if (this.driving) {
         console.log("删除")
         this.driving.clear();
@@ -260,7 +266,7 @@ export default {
       }).then((AMap) => {
         //构造路线导航类----------------------------
         this.driving = new AMap.Driving({
-          map: this.map,//是否需要地图指引
+          // map: this.map,//是否需要地图指引
           // panel: "panel"//路线导航
         });
 
@@ -284,25 +290,51 @@ export default {
             console.log("终点纬度" + result.end.location.lat);
             console.log("距离" + result.routes[0].distance + "米");//公里数单位米----------------------------
             console.log("时间" + result.routes[0].time + "秒");//时间数单位秒----------------------------
+           let  startName1=    result.start.name;
+
+
+             let   startLongitude1= result.destination.lng;//起点经度
+
+                let    startLatitude1= result.destination.lat;//起点纬度
+                let    endName1=result.destinationName;//终点名
+                let    endLongitude1= result.end.location.lng;//终点经度
+                let    endLatitude1= result.end.location.lat;//终点纬度
+
 
             var kilometre = result.routes[0].distance / 1000
             var tiemNum = result.routes[0].time / 60;
             that.$axios({
-              method: "get", url: `/takecar/order/passenger/takecar/`,
+              method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
               params: {
                 // acc: this.loginForm.passengerAcc,
                 // pwd: md5(this.loginForm.passengerPwd)
-                startName: result.start.name,//起点名
-                startLongitude: result.destination.lng,//起点经度
-                startLatitude: result.destination.lat,//起点纬度
-                endName: result.destinationName,//终点名
-                endLongitude: result.end.location.lng,//终点经度
-                endLatitude: result.end.location.lat,//终点纬度
+                passengerId:1,//that.$store.state.passengerInfo.passengerId
+                startName: startName1,//起点名
+                startLongitude: startLongitude1,//起点经度
+                startLatitude: startLatitude1,//起点纬度
+                endName: endName1,//终点名
+                endLongitude: endLongitude1,//终点经度
+                endLatitude:  endLatitude1,//终点纬度
                 mileage: kilometre,//历程“米”
+
               }
 
             }).then(res => {
               console.log(res.data)
+              if (res.data.statusCode == 101) {
+                Toast.success("乘客下单成功");
+                console.log(res.data.list[0])//订单数据
+
+              } else if (res.data.statusCode == 201) {
+                Toast.success("起点区域未开通服务");
+
+
+              } else if (res.data.statusCode == 301) {
+                Toast.fail("终点区域未开通服务");
+              }
+
+
+
             }).catch(err => {
               console.log(err)
             })

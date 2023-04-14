@@ -9,6 +9,7 @@ export default new Vuex.Store({
     state: {
         //乘客信息 对象
         passengerInfo: '',
+
     },
 
     //唯一取值的方法，计算属性

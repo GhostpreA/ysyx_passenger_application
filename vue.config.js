@@ -1,23 +1,25 @@
 const {defineConfig} = require('@vue/cli-service')
 module.exports = defineConfig({
     transpileDependencies: true,
-    assetsDir: 'assets',
-    publicPath:'./',
+    // assetsDir: 'assets',
+    // publicPath:'./',
+    // filenameHashing:false,
+    //
     devServer: {
         proxy: {
-            "/api": {
+            "/ysyx_passengerinfo": {
                 target: "http://localhost:8010",
                 changeOrigin: true,
                 pathRewrite: {
-                    "^/api": ""
+                    "^/ysyx_passengerinfo": ""
                 }
             },
 
-            "/takecar": {
+            "/ysyx_passengerconfirmo": {
                 target: "http://localhost:8340",
                 changeOrigin: true,
                 pathRewrite: {
-                    "^/takecar": ""
+                    "^/ysyx_passengerconfirmo": ""
                 }
             }
         }
