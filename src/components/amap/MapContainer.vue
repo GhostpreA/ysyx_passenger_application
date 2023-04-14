@@ -304,7 +304,7 @@ export default {
             var kilometre = result.routes[0].distance / 1000
             var tiemNum = result.routes[0].time / 60;
             that.$axios({
-              method: "post", url: `http://localhost:8080/ysyx_order/order/passenger/takecar`,//:8340
+              method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
               params: {
                 // acc: this.loginForm.passengerAcc,
                 // pwd: md5(this.loginForm.passengerPwd)
