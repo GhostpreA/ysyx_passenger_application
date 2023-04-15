@@ -71,9 +71,17 @@ export default {
 
     ...mapActions(["savePassengerInfoAction"]),
     clickLogin: function () {
+      var forbidClick =true;
+      // 自定义加载图标
+      Toast.loading({
+        message: '登录中...',
+        forbidClick,
+        duration:0,
+        loadingType: 'spinner',
+      });
       const that = this
       this.$axios({
-        method: "post", url: `:8010/ysyx_passengerinfo/passenger/login/byDatabaseAcc`,
+        method: "post", url: `http://124.71.167.112:8080/ysyx_passengerinfo/passenger/login/byDatabaseAcc`,
         data: {
           passengerAcc: this.loginForm.passengerAcc,
           passengerPwd: md5(this.loginForm.passengerPwd)
@@ -86,8 +94,10 @@ export default {
 
         } else if (res.data.statusCode == 102) {
           Toast.success(res.data.message);
+          this.savePassengerInfoAction(res.data.list[0])
+          // this.$store.state.passengerInfo=res.data.list[0]
           router.push({path: "home"})
-          this.$store.state.passengerInfo=res.data.list[0]
+
 
         } else if (res.data.statusCode == 201) {
           Toast.fail(res.data.message);

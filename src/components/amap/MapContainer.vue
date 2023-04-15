@@ -114,19 +114,19 @@ export default {
       shgowCentre: true,//选择位置界面
       showForm: false,//订单详情界面 可取消订单
 
-      startLongitude1: "",//起点经度
-      startLatitude1: "",//起点纬度
-      endLongitude1: "",//终点经度
-      endLatitude1: "",//终点纬度
+      startLongitude: "",//起点经度
+      startLatitude: "",//起点纬度
+      endLongitude: "",//终点经度
+      endLatitude: "",//终点纬度
 
-      startName1: "",//起点名
-      endName1: "",//终点名
+      startName: "",//起点名
+      endName: "",//终点名
       kilometre: "",//公里
       price: "",//价格
       min: 0,
-      max: 10,
+      max: 60,
       timer: null, //定时器名称
-      time: 5 * 60 * 1000,
+      time: 1 * 60 * 1000,
 
     }
   },
@@ -261,55 +261,65 @@ export default {
 
     //下单
     placeAnOrder: function () {
+      var forbidClick =true;
+      // 自定义加载图标
+      Toast.loading({
+        message: '下单中...',
+        forbidClick,
+        duration:0,
+        loadingType: 'spinner',
+      });
+      this.$axios({
+        method: "post", url: `http://124.71.167.112:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
+        params: {
+          passengerId: this.$store.state.passengerInfo.passengerId,
+          startName: this.startName,//起点名
+          startLongitude: this.startLongitude,//起点经度
+          startLatitude: this.startLatitude,//起点纬度
+          endName: this.endName,//终点名
+          endLongitude: this.endLongitude,//终点经度
+          endLatitude: this.endLatitude,//终点纬度
+          orderMileage: this.kilometre,//历程“米”
 
-      const that = this
-
-      this.shgowCentre = false;//选择位置界面
-      this.showForm = true;//订单详情界面 可取消订单
-
-      that.timer = setInterval(() => {//定时器开始
-        that.min++;//每分钟加1
-        console.log("place1111111")
-        if (that.min == that.max) {//min=max时停止计时
-          alert("dz")
-          clearInterval(that.timer);// 满足条件时 停止计时
         }
-      }, 1000)
 
-      // that.$axios({
-      //   method: "post", url: `http://localhost:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
-      //   params: {
-      //     passengerId: 1,//that.$store.state.passengerInfo.passengerId
-      //     startName: that.startName1,//起点名
-      //     startLongitude: that.startLongitude1,//起点经度
-      //     startLatitude: that.startLatitude1,//起点纬度
-      //     endName: that.endName1,//终点名
-      //     endLongitude: that.endLongitude1,//终点经度
-      //     endLatitude: that.endLatitude1,//终点纬度
-      //     orderMileage: that.kilometre,//历程“米”
-      //
-      //   }
-      //
-      // }).then(res => {
-      //   console.log(res.data)
-      //   if (res.data.statusCode == 101) {
-      //     Toast.success("乘客下单成功");
-      //     console.log(res.data.list[0])//订单数据
-      //
+      }).then(res => {
+        console.log(res.data)
+        if (res.data.statusCode == 101) {
+          Toast.success("乘客下单成功");
+          this.min=0;//计时归零
+          this.$refs.countDown.reset();
+          const that = this
 
-      //
-      //
-      //   } else if (res.data.statusCode == 201) {
-      //     Toast.success("起点区域未开通服务");
-      //
-      //
-      //   } else if (res.data.statusCode == 301) {
-      //     Toast.fail("终点区域未开通服务");
-      //   }
-      //
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+          this.shgowCentre = false;//选择位置界面
+          this.showForm = true;//订单详情界面 可取消订单
+
+          that.timer = setInterval(() => {//定时器开始
+            that.min++;//每分钟加1
+            console.log("place1111111")
+            if (that.min == that.max) {//min=max时停止计时
+              this.shgowCentre = true;//选择位置界面
+              this.showForm = false;//订单详情界面 可取消订单
+
+              // alert("dz")
+              clearInterval(that.timer);// 满足条件时 停止计时
+            }
+          }, 1000)
+          console.log(res.data.list[0])//订单数据
+        } else if (res.data.statusCode == 201) {
+          Toast.success("起点区域未开通服务");
+
+
+        } else if (res.data.statusCode == 301) {
+          Toast.fail("终点区域未开通服务");
+        }
+
+      }).catch(err => {
+        console.log(err)
+      })
+
+
+
 
     },
 
@@ -354,27 +364,22 @@ export default {
           if (status === 'complete') {
             console.log(result)
             console.log("起点名" + result.start.name)
-            console.log("起点经度" + result.destination.lng)
-            console.log("起点纬度" + result.destination.lat)
+            console.log("起点经度" + result.origin.lng)
+            console.log("起点纬度" + result.origin.lat)
 
             console.log("终点名" + result.destinationName)
             console.log("终点经度" + result.end.location.lng);
             console.log("终点纬度" + result.end.location.lat);
             console.log("距离" + result.routes[0].distance + "米");//公里数单位米----------------------------
             console.log("时间" + result.routes[0].time + "秒");//时间数单位秒----------------------------
-            that.startName1 = result.start.name;
-
-
-            let startLongitude1 = result.destination.lng;//起点经度
-
-            let startLatitude1 = result.destination.lat;//起点纬度
-            that.endName1 = result.destinationName;//终点名
-            let endLongitude1 = result.end.location.lng;//终点经度
-            let endLatitude1 = result.end.location.lat;//终点纬度
-
-
+            that.startName = result.start.name;
+            that.startLongitude = result.origin.lng;//起点经度
+            that.startLatitude = result.origin.lat;//起点纬度
+            that.endName = result.destinationName;//终点名
+            that.endLongitude = result.end.location.lng;//终点经度
+            that.endLatitude = result.end.location.lat;//终点纬度
             that.kilometre = result.routes[0].distance / 1000 //公里
-            var priceNum = that.kilometre * 1.7 + result.routes[0].time / 60;//价格
+            var priceNum = that.kilometre * 1.7 ;//价格
             if (priceNum >= 10) {
               that.price = priceNum.toFixed(2)
             } else if (priceNum <= 10) {
