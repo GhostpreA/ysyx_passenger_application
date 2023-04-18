@@ -81,7 +81,7 @@ export default {
       });
       const that = this
       this.$axios({
-        method: "post", url: `http://124.71.167.112:8080/ysyx_passengerinfo/passenger/login/byDatabaseAcc`,
+        method: "post", url: `/ysyx_passengerinfo/passenger/login/byDatabaseAcc`,
         data: {
           passengerAcc: this.loginForm.passengerAcc,
           passengerPwd: md5(this.loginForm.passengerPwd)

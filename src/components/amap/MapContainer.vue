@@ -1,14 +1,5 @@
 <template>
   <div>
-    <!--    导航-->
-    <!--    <div class="input-item">-->
-    <!--      <div class="input-item-prepend"><span class="input-item-text">经纬度</span></div>-->
-    <!--      <input id='lnglat' type="text" v-model="passengerOrigin">-->
-    <!--    </div>-->
-
-    <!--    <input id="regeo" type="button" class="btn" value="经纬度 -> 地址">-->
-
-
     <div id="container"></div>
     <div class="centre" v-show="shgowCentre">
       <br>
@@ -90,6 +81,7 @@ import {Dialog} from 'vant';
 import md5 from "js-md5";
 import {Toast} from "vant";
 import router from "@/router";
+import {mapActions} from "vuex";
 
 window._AMapSecurityConfig = {
   securityJsCode: myconf.gdCode//密匙
@@ -108,7 +100,8 @@ export default {
       passengerOriginText: "",//定位乘客地址
       passengerFinishText: "",//乘客的终点
       myKey: myconf.gdKey,//key
-      driving: null,  //路线
+      driving: null,  //车辆
+      cardriving:null,//车辆路线
 
 
       shgowCentre: true,//选择位置界面
@@ -131,6 +124,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['savePassengerOrderAction','savePassengerInfoAction']),
     initMap() {
 
       AMapLoader.load({
@@ -178,7 +172,7 @@ export default {
           var str = [];
           // 定位锁定起点
           that.passengerOrigin = data.position
-          // this.passengerOrigin=data.position
+
           //调用定位方法传入data参数-------------------------------------------------------
           that.translatePositional(that.passengerOrigin);
           // regeoCode()
@@ -218,7 +212,58 @@ export default {
         console.log(e);
       })
     },
+    // 小车车动了
+    carStartGo(){
+      AMapLoader.load({
+        key:this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
+        version:"2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        plugins:["AMap.MoveAnimation","AMap.Marker","AMap.Polyline","AMap.GraspRoad"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      }).then((AMap)=>{
+        // this.map.remove(this.marker);
+        // 将路径转成车辆可运行的数据
+        this.marker = JSON.parse(JSON.stringify(this.carDriving))
+        this.lineArr= JSON.parse(JSON.stringify(this.carDriving))
 
+        const that=this
+        this.marker = new AMap.Marker({
+          map: that.map,
+          // 转化为经纬度【x，y】
+          position: (that.passengerOrigin+"").split(","),
+          icon:new AMap.Icon({
+            size: new AMap.Size(60, 60),    // 图标尺寸
+            image: 'https://a.amap.com/jsapi_demos/static/demo-center-v2/car.png',  // Icon的图像
+            // imageOffset: new AMap.Pixel(-13, -26),  // 图像相对展示区域的偏移量，适于雪碧图等
+            imageSize: new AMap.Size(26, 52)   // 根据所设置的大小拉伸或压缩图片
+          }),
+          offset: new AMap.Pixel(0, 0),
+        });
+
+        var passedPolyline = new AMap.Polyline({
+        });
+        this.marker.on('moving', function (e) {
+          passedPolyline.setPath(e.passedPath);
+          that.map.setCenter(e.target.getPosition(),true)
+        });
+
+        this.map.setFitView();
+
+        window.startAnimation = function startAnimation () {
+          that.marker.moveAlong(that.lineArr, {
+            // 每一段的时长
+            duration: 500,//可根据实际采集时间间隔设置
+            // JSAPI2.0 是否延道路自动设置角度在 moveAlong 里设置
+            autoRotation: true,
+          });
+          that.marker.setTop(true)//车辆置顶
+        };
+
+        // 添加进入
+        this.map.add(this.marker);
+        startAnimation ()
+      }).catch(e=>{
+        console.log(e);
+      })
+    },
     //经纬度转文字定位
     translatePositional(id) {
       console.log("经纬度转文字定位")
@@ -261,6 +306,7 @@ export default {
 
     //下单
     placeAnOrder: function () {
+
       var forbidClick =true;
       // 自定义加载图标
       Toast.loading({
@@ -270,7 +316,7 @@ export default {
         loadingType: 'spinner',
       });
       this.$axios({
-        method: "post", url: `http://124.71.167.112:8080/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
+        method: "post", url: `/ysyx_passengerconfirmo/order/passenger/takecar`,//:8340
         params: {
           passengerId: this.$store.state.passengerInfo.passengerId,
           startName: this.startName,//起点名
@@ -287,6 +333,9 @@ export default {
         console.log(res.data)
         if (res.data.statusCode == 101) {
           Toast.success("乘客下单成功");
+          this.savePassengerOrderAction(res.data.list[0])
+
+          console.log(this.$store.state.passengerOrder)
           this.min=0;//计时归零
           this.$refs.countDown.reset();
           const that = this
@@ -296,15 +345,17 @@ export default {
 
           that.timer = setInterval(() => {//定时器开始
             that.min++;//每分钟加1
-            console.log("place1111111")
+
             if (that.min == that.max) {//min=max时停止计时
               this.shgowCentre = true;//选择位置界面
               this.showForm = false;//订单详情界面 可取消订单
-
               // alert("dz")
               clearInterval(that.timer);// 满足条件时 停止计时
             }
-          }, 1000)
+            console.log("dz")
+            that.passengerRequestCar();
+          }, 3000)
+
           console.log(res.data.list[0])//订单数据
         } else if (res.data.statusCode == 201) {
           Toast.success("起点区域未开通服务");
@@ -323,7 +374,7 @@ export default {
 
     },
 
-
+    // 计时器
     cancellation: function () {
 
       this.shgowCentre = true;
@@ -396,6 +447,36 @@ export default {
         console.log(e);
       })
     },
+// 乘客请求接单
+    passengerRequestCar(){
+
+
+          const that =this
+      this.$axios({
+
+        method: "get", url: `/ysyx_passengerorderquery/passenger/getOrderInfo/${this.$store.state.passengerOrder.orderId}`,//:8340
+
+
+      }).then(res => {
+        console.log(res.data)
+        if (res.data.statusCode == 101) {
+          Toast.success("司机接单");
+          clearInterval(this.timer);// 停止计时
+          that.savePassengerOrderAction(res.data.list[0])
+          // this.customNavigationId([119.284459,26.04489],[this.passengerOrigin])//导航路线 起点this.passengerOrigin 终点
+
+
+        } else if (res.data.statusCode == 201) {
+          Toast.success("无司机接单");
+        }
+
+      }).catch(err => {
+        console.log(err)
+      })
+
+
+
+},
 
 
     // 自定义导航  起点名  终点名
@@ -440,7 +521,56 @@ export default {
         console.log(e);
       })
     },
+// 自定义导航  起点坐标  终点坐标
+    customNavigationId(startid,finishid){
+      // 测试输入经纬度
+      // startid=[119.284459,26.04489]
+      // finishid=[119.296411,26.074286]
+      AMapLoader.load({
+        key:this.myKey,             // 申请好的Web端开发者Key，首次调用 load 时必填
+        version:"2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+        plugins:["AMap.Driving"],       // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      }).then((AMap)=>{
+        //构造路线导航类----------------------------
+        this.driving = new AMap.Driving({
+          map: this.map,//是否需要地图指引------------------
+          // panel: "panel"//路线导航-------------------
+        });
+        const that =this
+        // 根据起终点经纬度规划驾车导航路线
+        this.driving.search(new AMap.LngLat((startid+"").split(",")[0]*1,(startid+"").split(",")[1]*1), new AMap.LngLat((finishid+"").split(",")[0]*1,(finishid+"").split(",")[1]*1), function(status, result) {
+          // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+          if (status === 'complete') {
+            console.log('绘制驾车路线完成');
+            console.log(result);
+            console.log(result.routes[0].distance);//公里数单位米----------------------------
+            console.log(result.routes[0].time);//时间数单位秒----------------------------
+            console.log(result.routes[0].steps);//子路段----------------------------
+            // 拿到所有定位的车的路线
+            let carArr=[];
+            for (let i = 0; i <result.routes[0].steps.length ; i++) {
+              for (let j = 0; j <result.routes[0].steps[i].path.length ; j++) {
+                var arr2 = [result.routes[0].steps[i].path[j].lng,result.routes[0].steps[i].path[j].lat]
 
+                carArr.push(arr2)
+              }
+            }
+            console.log(carArr)
+            that.carDriving=carArr
+            that.carStartGo()//车辆移动
+          } else {
+            console.log(('获取驾车数据失败：' + result));
+          }
+        });
+
+
+      }).catch(e=>{
+        console.log(e);
+      })
+    },
+
+
+  },
 
     //   定位
     positioning() {
@@ -496,7 +626,7 @@ export default {
 
     }
 
-  },
+  ,
   mounted() {
     //DOM初始化完成进行地图初始化
     this.initMap();

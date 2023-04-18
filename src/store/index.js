@@ -9,6 +9,7 @@ export default new Vuex.Store({
     state: {
         //乘客信息 对象
         passengerInfo: '',
+        passengerOrder:''
 
     },
 
@@ -18,13 +19,15 @@ export default new Vuex.Store({
     //唯一可以修改state值的方法，同步阻塞
     mutations: {
         //同步方法 保存乘客信息
-        savePassengerInfo: (state, resInfo) => state.passengerInfo = resInfo
+        savePassengerInfo: (state, resInfo) => state.passengerInfo = resInfo,
+        savePassengerOrder: (state, resInfo) => state.passengerOrder = resInfo
     },
 
     //异步调用mutations方法
     actions: {
         //异步方法调用 同步保存乘客信息
-        savePassengerInfoAction:({commit},resInfo)=>{commit("savePassengerInfo",resInfo)}
+        savePassengerInfoAction:({commit},resInfo)=>{commit("savePassengerInfo",resInfo)},
+        savePassengerOrderAction:({commit},resInfo)=>{commit("savePassengerOrder",resInfo)}
     },
     modules: {}
 })
