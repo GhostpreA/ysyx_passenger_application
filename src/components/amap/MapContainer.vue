@@ -56,7 +56,7 @@
             <van-count-down  ref="countDown" :time="time" format=" mm 分 ss 秒"/>
           </van-col>
           <van-col offset="4" span="6">
-            等待接单
+           {{orderState}}
           </van-col>
         </van-row>
 
@@ -102,6 +102,7 @@ export default {
       myKey: myconf.gdKey,//key
       driving: null,  //车辆
       cardriving:null,//车辆路线
+      orderState:"订单发布中",//订单状态
 
 
       shgowCentre: true,//选择位置界面
@@ -117,7 +118,7 @@ export default {
       kilometre: "",//公里
       price: "",//价格
       min: 0,
-      max: 60,
+      max: 12,
       timer: null, //定时器名称
       time: 1 * 60 * 1000,
 
@@ -250,7 +251,7 @@ export default {
         window.startAnimation = function startAnimation () {
           that.marker.moveAlong(that.lineArr, {
             // 每一段的时长
-            duration: 500,//可根据实际采集时间间隔设置
+            duration: 1000,//可根据实际采集时间间隔设置
             // JSAPI2.0 是否延道路自动设置角度在 moveAlong 里设置
             autoRotation: true,
           });
@@ -354,7 +355,7 @@ export default {
             }
             console.log("dz")
             that.passengerRequestCar();
-          }, 3000)
+          }, 5000)
 
           console.log(res.data.list[0])//订单数据
         } else if (res.data.statusCode == 201) {
@@ -459,15 +460,24 @@ export default {
 
       }).then(res => {
         console.log(res.data)
-        if (res.data.statusCode == 101) {
-          Toast.success("司机接单");
-          clearInterval(this.timer);// 停止计时
-          that.savePassengerOrderAction(res.data.list[0])
-          // this.customNavigationId([119.284459,26.04489],[this.passengerOrigin])//导航路线 起点this.passengerOrigin 终点
+        if (res.data.statusCode == 301) {
+          Toast.success("无订单");
+
 
 
         } else if (res.data.statusCode == 201) {
-          Toast.success("无司机接单");
+          Toast.success("订单状态");
+           if (res.data.list[0].orderStatus == 301) {
+
+            Toast.success("订单已分配司机，司机前往起点中");
+            clearInterval(this.timer);// 停止计时
+
+            that.savePassengerOrderAction(res.data.list[0])//修改vuex订单数据
+             that.orderState=res.data.list[0].driverName+"司机正在途中"//修改订单状态
+             console.log((res.data.list[0].driverLongitude*1).toFixed(6))
+             console.log((res.data.list[0].driverLatitude*1).toFixed(6))
+            this.customNavigationId([119.284459,26.04489],[(res.data.list[0].driverLongitude*1).toFixed(6),(res.data.list[0].driverLatitude*1).toFixed(6)])//导航路线 起点this.passengerOrigin 终点
+          }
         }
 
       }).catch(err => {
