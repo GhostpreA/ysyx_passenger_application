@@ -11,6 +11,7 @@ import BindingPhoneView from "@/views/BindingPhoneView";
 import AmendPwd from "@/views/AmendPwdView";
 import AmendPwdView from "@/views/AmendPwdView";
 import PosterView from "@/views/PosterView";
+import PayOrderView from "@/views/PayOrderView.vue"
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -68,6 +69,11 @@ const routes = [
         name: 'amendPwd',
         component: AmendPwdView
     },
+    {
+        path: '/payOrder',
+        name: 'payOrder',
+        component: PayOrderView
+    }
 
 
 ]

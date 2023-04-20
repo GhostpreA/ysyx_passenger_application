@@ -91,6 +91,7 @@ export default {
         console.log(res.data)
         if (res.data.statusCode == 101) {
           Toast.success(res.data.message);
+          Toast.success(res.data.message);
 
         } else if (res.data.statusCode == 102) {
           Toast.success(res.data.message);

@@ -9,8 +9,8 @@ export default new Vuex.Store({
     state: {
         //乘客信息 对象
         passengerInfo: '',
-        passengerOrder:''
-
+        passengerOrder:'',
+        unPayOrderInfo:''
     },
 
     //唯一取值的方法，计算属性
@@ -20,14 +20,16 @@ export default new Vuex.Store({
     mutations: {
         //同步方法 保存乘客信息
         savePassengerInfo: (state, resInfo) => state.passengerInfo = resInfo,
-        savePassengerOrder: (state, resInfo) => state.passengerOrder = resInfo
+        savePassengerOrder: (state, resInfo) => state.passengerOrder = resInfo,
+        saveUnPayOrderInfo: (state,resInfo) => state.unPayOrderInfo = resInfo
     },
 
     //异步调用mutations方法
     actions: {
         //异步方法调用 同步保存乘客信息
         savePassengerInfoAction:({commit},resInfo)=>{commit("savePassengerInfo",resInfo)},
-        savePassengerOrderAction:({commit},resInfo)=>{commit("savePassengerOrder",resInfo)}
+        savePassengerOrderAction:({commit},resInfo)=>{commit("savePassengerOrder",resInfo)},
+        saveUnPayOrderInfoAction:({commit},resInfo)=>{commit("saveUnPayOrderInfo",resInfo)}
     },
     modules: {}
 })
