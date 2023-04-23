@@ -11,7 +11,9 @@ import BindingPhoneView from "@/views/BindingPhoneView";
 import AmendPwd from "@/views/AmendPwdView";
 import AmendPwdView from "@/views/AmendPwdView";
 import PosterView from "@/views/PosterView";
-import PayOrderView from "@/views/PayOrderView.vue"
+import PayOrderView from "@/views/PayOrderView.vue";
+import historyOrderinfoView from "@/views/HistoryOrderinfoView.vue";
+import historyOrderListView from "@/views/HistoryOrderListView.vue";
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -73,6 +75,16 @@ const routes = [
         path: '/payOrder',
         name: 'payOrder',
         component: PayOrderView
+    },
+    {
+        path: '/historyOrderList',
+        name: 'historyOrderList',
+        component: historyOrderListView
+    },
+    {
+        path: '/historyOrderinfo',
+        name: 'histroyOrderinfo',
+        component: historyOrderinfoView
     }
 
 

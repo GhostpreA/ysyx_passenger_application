@@ -24,7 +24,7 @@
       <div style="width: 100%;height: 25px; background-color: #cccece"></div>
 
       <br>
-      <van-cell title="订单" icon="bookmark-o" is-link style="font-size: 25px"></van-cell>
+      <van-cell title="订单" @click="toOrderList()" icon="bookmark-o" is-link style="font-size: 25px"></van-cell>
       <van-divider :style="{ color: '#cccece', borderColor: '#cccece', padding: '0 0px' }">
       </van-divider>
       <van-cell title="钱包" icon="bill-o" is-link style="font-size: 25px"></van-cell>
@@ -55,6 +55,12 @@ export default {
   data() {
     return {
       active: ""
+    }
+  },
+  methods:{
+    toOrderList(){
+      console.log("去订单列表")
+      this.$router.push("/historyOrderList")
     }
   }
 }
